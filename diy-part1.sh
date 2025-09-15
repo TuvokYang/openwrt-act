@@ -15,5 +15,8 @@
 
 # Add a feed source
 sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git|' feeds.conf.default
-echo 'src-git meotohust  https://github.com/TuvokYang/mentohust.git' >> feeds.conf.default
-echo 'src-git luci-app-meotohust  https://github.com/TuvokYang/luci-app-mentohust.git' >> feeds.conf.default
+
+sed -i '/^src-git mentohust .*/d'  feeds.conf.default
+echo >> feeds.conf.default
+echo 'src-git mentohust https://github.com/TuvokYang/mentohust.git' >> feeds.conf.default
+echo 'src-git luci-app-mentohust https://github.com/TuvokYang/luci-app-mentohust.git' >> feeds.conf.default
