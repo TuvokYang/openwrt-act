@@ -18,7 +18,9 @@ sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git|' 
 
 sed -i '/^src-link custom*/d' feeds.conf.default
 mkdir -p custom
-cd custom && git clone https://github.com/TuvokYang/mentohust.git
-cd custom && git clone https://github.com/TuvokYang/luci-app-mentohust.git
+pushd custom
+    git clone https://github.com/TuvokYang/mentohust.git
+    git clone https://github.com/TuvokYang/luci-app-mentohust.git
+popd
 echo "src-link custom $(pwd)/custom" >> feeds.conf.default
 cat feeds.conf.default
