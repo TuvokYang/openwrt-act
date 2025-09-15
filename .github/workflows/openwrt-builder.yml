@@ -52,13 +52,14 @@ jobs:
         sudo ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
         sudo dpkg-reconfigure -f noninteractive tzdata
         sudo mkdir -p /workdir
-        sudo chown $SUDO_USER:$GROUPS /workdir
+        sudo chown $(id -u):$(id -g) /workdir
 
     - name: Clone source code
       working-directory: /workdir
       run: |
-        cd /workdir && df -hT $PWD
-        cd /workdir && git clone $REPO_URL -b $REPO_BRANCH openwrt
+        df -hT $PWD
+        echo current directory: $pwd
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
