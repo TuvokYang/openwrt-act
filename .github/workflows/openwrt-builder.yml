@@ -66,8 +66,7 @@ jobs:
 
     - name: Update feeds
       run: |
-        cd openwrt && ./scripts/feeds update -a
-        cat feeds.conf.default
+        cd openwrt && ./scripts/feeds update -a || cat feeds.conf.default; exit 1
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
