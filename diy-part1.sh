@@ -16,8 +16,9 @@
 # Add a feed source
 sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git|' feeds.conf.default
 
-sed -i '/^src-link custom*/d'  feeds.conf.default
+sed -i '/^src-link custom*/d' feeds.conf.default
 mkdir -p custom
 cd custom && git clone https://github.com/TuvokYang/mentohust.git
 cd custom && git clone https://github.com/TuvokYang/luci-app-mentohust.git
 echo "src-link custom $(pwd)/custom" >> feeds.conf.default
+cat feeds.conf.default
