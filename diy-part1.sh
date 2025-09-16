@@ -14,7 +14,7 @@
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 
 # Add a feed source
-sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git^luci-mod-network|' feeds.conf.default
+sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git;luci-mod-network|' feeds.conf.default
 
 sed -i '/^src-link custom*/d' feeds.conf.default
 mkdir -p custom
