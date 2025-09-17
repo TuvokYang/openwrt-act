@@ -17,7 +17,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-
+permissions:
+  actions: read
 env:
   REPO_URL: https://github.com/TuvokYang/openwrt.git
   REPO_BRANCH: main
@@ -41,10 +42,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo $GITHUB_REPOSITORY
         response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
           "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runners?per_page=100")
-        echo "$response"
         if echo "$response" | grep -q '"status":"online"'; then
           echo "runner=self-hosted" >> $GITHUB_OUTPUT
         else
