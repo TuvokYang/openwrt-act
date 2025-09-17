@@ -49,11 +49,16 @@ jobs:
     needs: test_self_hosted
     runs-on: ubuntu-latest
     outputs:
-      selected-runner: ${{ needs.test_self_hosted.outputs.use_self_hosted == 'true' && 'self-hosted' || 'ubuntu-22.04' }}
+      runner: ${{steps.select_runner.outputs.runner}}
+    steps:
+      - name: Select Runner
+        id: select_runner
+        run: |
+          if [[ ${{ needs.test_self_hosted.outputs.use_self_hosted }} == 'true' ]]; then echo "runner=[self-hosted]" >> $GITHUB_OUTPUT; else echo "ubuntu-22.04" >> $GITHUB_OUTPUT; fi
   build:
     needs: select-runner
-    name: Build OpenWRT on ${{ needs.select-runner.outputs.selected-runner }}
-    runs-on: ${{ needs.select-runner.outputs.selected-runner }}
+    name: Build OpenWRT on ${{ needs.select-runner.outputs.runner }}
+    runs-on: ${{ needs.select-runner.outputs.runner }}
     strategy:
       fail-fast: false
       matrix:
