@@ -31,9 +31,29 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
+  test_self_hosted:
+    runs-on: self-hosted
+    continue-on-error: true  # 允许失败
+    outputs:
+      use_self_hosted: ${{ steps.check_runner.outputs.use_self_hosted }}
+    steps:
+      - name: Check if self-hosted works
+        id: test_runner
+        run: |
+          ping -c 1 github.com || exit 1
+      - name: Set output if successful
+        id: check_runner
+        if: steps.test_runner.outcome == 'success'
+        run: echo "use_self_hosted=true" >> $GITHUB_OUTPUT
+  select-runner:
+    needs: test_self_hosted
+    runs-on: ubuntu-latest
+    outputs:
+      selected-runner: ${{ needs.test_self_hosted.outputs.use_self_hosted == 'true' && 'self-hosted' || 'ubuntu-22.04' }}
   build:
-    name: Build OpenWRT on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    needs: select-runner
+    name: Build OpenWRT on ${{ needs.select-runner.outputs.selected-runner }}
+    runs-on: ${{ needs.select-runner.outputs.selected-runner }}
     strategy:
       fail-fast: false
       matrix:
