@@ -41,6 +41,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        echo $GITHUB_REPOSITORY
         response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
           "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runners?per_page=100")
         echo "$response"
