@@ -44,7 +44,6 @@ jobs:
       run: |
         response=$(curl -s -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $RUNNER_ACCESS_TOKEN" \
           "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runners?per_page=100")
-        echo response: $response
         if echo "$response" | grep -q '"status": "online"'; then
           echo "runner=self-hosted" >> $GITHUB_OUTPUT
         else
