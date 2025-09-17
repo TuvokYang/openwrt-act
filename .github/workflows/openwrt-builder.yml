@@ -63,7 +63,7 @@ jobs:
       run: |
         df -hT $PWD
         echo "current directory: $(pwd)"
-        if [ -d openwrt ]; then cd openwrt && git checkout -f "$REPO_BRANCH"; else git clone "$REPO_URL" -b "$REPO_BRANCH" openwrt; fi
+        if [ -d openwrt ]; then cd openwrt && git fetch && git checkout -f "$REPO_BRANCH"; else git clone "$REPO_URL" -b "$REPO_BRANCH" openwrt; fi
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
