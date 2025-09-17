@@ -32,10 +32,12 @@ env:
 
 jobs:
   build:
-    runs-on: self-hosted, ubuntu-22.04
-    timeout-minutes: 300
+    name: Build OpenWRT on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      matrix:
+        os: [self-hosted, ubuntu-22.04]
     steps:
     - name: Checkout
       uses: actions/checkout@main
