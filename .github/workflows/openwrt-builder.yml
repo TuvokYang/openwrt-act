@@ -31,31 +31,24 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  test_self_hosted:
-    runs-on: self-hosted
-    timeout-minutes: 3
-    continue-on-error: true  # 允许失败
-    outputs:
-      use_self_hosted: ${{ steps.check_runner.outputs.use_self_hosted }}
-    steps:
-      - name: Check if self-hosted works
-        id: test_runner
-        run: |
-          echo "Hi" || exit 1
-      - name: Set output if successful
-        id: check_runner
-        if: steps.test_runner.outcome == 'success'
-        run: echo "use_self_hosted=true" >> $GITHUB_OUTPUT
   select-runner:
-    needs: test_self_hosted
     runs-on: ubuntu-latest
     outputs:
-      runner: ${{steps.select_runner.outputs.runner}}
+      runner: ${{steps.check_runner.outputs.runner}}
     steps:
-      - name: Select Runner
-        id: select_runner
-        run: |
-          if [[ "${{ needs.test_self_hosted.outputs.use_self_hosted }}" == 'true' ]]; then echo "runner=self-hosted" >> $GITHUB_OUTPUT; else echo "ubuntu-22.04" >> $GITHUB_OUTPUT; fi
+    - name: Check if self-hosted runner is online
+      id: check_runner
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runners?per_page=100")
+        if echo "$response" | grep -q '"status":"online"'; then
+          echo "runner=self-hosted" >> $GITHUB_OUTPUT
+        else
+          echo "runner=ubuntu-22.04" >> $GITHUB_OUTPUT
+        fi
+      
   build:
     needs: select-runner
     name: Build OpenWRT on "${{ needs.select-runner.outputs.runner }}"
