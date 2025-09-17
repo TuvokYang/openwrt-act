@@ -128,7 +128,9 @@ jobs:
 
     - name: Check space usage
       if: (!success())
-      run: df -hT
+      run: |
+        du -h -d1 .
+        du -h -d1 /workdir/openwrt
 
     - name: Upload bin directory
       uses: actions/upload-artifact@main
