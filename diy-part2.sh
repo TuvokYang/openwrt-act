@@ -20,4 +20,4 @@
 # sed -i 's/OpenWrt/Cudy TR3000/g' package/base-files/files/bin/config_generate
 
 #set llvm.download-ci-llvm=false for rust
-sed -i 's#download-ci-llvm=true#download-ci-llvm=false#g' feeds/packages/lang/rust/Makefile
+sed -i 's#download-ci-llvm=.* #download-ci-llvm=false #g' feeds/packages/lang/rust/Makefile
