@@ -59,7 +59,7 @@ jobs:
       fail-fast: false
     steps:
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@v5
 
     - name: Initialization environment
       env:
