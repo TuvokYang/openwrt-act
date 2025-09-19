@@ -96,7 +96,7 @@ jobs:
 
     - name: Update feeds
       run: |
-        cd openwrt && ./scripts/feeds update -a
+        cd openwrt && if [ -d feeds ]; then rm -rf feeds; fi && ./scripts/feeds update -a
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
