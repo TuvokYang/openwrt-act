@@ -25,6 +25,7 @@ env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
+  DIY_INSTALL_DEPS: diy-install-deps.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
@@ -47,7 +48,7 @@ jobs:
         if echo "$response" | grep -q '"status": "online"'; then
           echo "runner=self-hosted" >> $GITHUB_OUTPUT
         else
-          echo "runner=ubuntu-22.04" >> $GITHUB_OUTPUT
+          echo "runner=ubuntu-24.04" >> $GITHUB_OUTPUT
         fi
       
   build:
@@ -68,7 +69,8 @@ jobs:
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
         sudo docker image prune --all --force || echo "docker not exists"
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3-distutils python3-setuptools rsync swig unzip zlib1g-dev file wget
+        chmod +x $GITHUB_WORKSPACE/$DIY_INSTALL_DEPS
+        sudo $GITHUB_WORKSPACE/$DIY_INSTALL_DEPS
         sudo -E apt-get -qq install tzdata
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
