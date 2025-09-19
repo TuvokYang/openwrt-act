@@ -18,7 +18,7 @@ case "$NAME" in
         esac
         ;;
     *)
-        echo "System: "$NAME-$VERSION_ID"" not supported."
+        echo "System: \"$NAME-$VERSION_ID\" not supported."
         exit 1
         ;;
 esac
