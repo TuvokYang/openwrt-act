@@ -131,7 +131,7 @@ jobs:
       if: (!success())
       run: |
         du -h -d1 .
-        du -h -d1 /workdir/openwrt
+        du -h -d0 /workdir/openwrt
 
     - name: Upload bin directory
       uses: actions/upload-artifact@main
