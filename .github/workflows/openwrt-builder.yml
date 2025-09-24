@@ -64,7 +64,7 @@ jobs:
 
     - name: Free Disk Space
       uses: jlumbroso/free-disk-space@main
-      if: ${{ needs.select-runner.outputs.runner }} != "self-hosted"
+      if: ${{ !contains(needs.select-runner.outputs.runner, 'self-hosted') }}
       with:
         # this might remove tools that are actually needed,
         # if set to "true" but frees about 6 GB
