@@ -55,7 +55,7 @@ jobs:
     needs: select-runner
     name: Build OpenWRT on "${{ needs.select-runner.outputs.runner }}"
     runs-on: ${{ needs.select-runner.outputs.runner }}
-    timeout-minutes: 300
+    timeout-minutes: 600
     strategy:
       fail-fast: false
     steps:
