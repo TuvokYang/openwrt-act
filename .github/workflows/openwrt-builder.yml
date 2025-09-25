@@ -54,8 +54,10 @@ jobs:
   build:
     needs: select-runner
     name: Build OpenWRT on "${{ needs.select-runner.outputs.runner }}"
+    permissions:
+      contents: write
     runs-on: ${{ needs.select-runner.outputs.runner }}
-    timeout-minutes: 300
+    timeout-minutes: 600
     strategy:
       fail-fast: false
     steps:
@@ -64,7 +66,7 @@ jobs:
 
     - name: Free Disk Space
       uses: jlumbroso/free-disk-space@main
-      if: ${{ needs.select-runner.outputs.runner }} != 'self-hosted'
+      if: (!contains(needs.select-runner.outputs.runner, 'self-hosted'))
       with:
         # this might remove tools that are actually needed,
         # if set to "true" but frees about 6 GB
@@ -134,7 +136,7 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make || make V=s
+        make -j$(nproc) || make V=s
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
