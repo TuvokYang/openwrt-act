@@ -7,3 +7,4 @@ Building OpenWrt for Cudy TR3000 256MB v1 with GitHub Actions from [Actions-Open
 - Generate `.config` files using [OpenWrt](https://github.com/openwrt/openwrt) source code. ( You can change it through environment variables in the workflow file. )
 - Push `.config` file to the GitHub repository.
 - When the build is complete, click the `Artifacts` button in the upper right corner of the Actions page to download the binaries.
+- Only modifications to .github/lworkflows and related files can automatically trigger the GitHub Action for compilation.
