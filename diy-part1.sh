@@ -10,9 +10,6 @@
 # See /LICENSE for more information.
 #
 
-# Uncomment a feed source
-#sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
-
 # Add a feed source
 sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git;openwrt-24.10|' feeds.conf.default
 
