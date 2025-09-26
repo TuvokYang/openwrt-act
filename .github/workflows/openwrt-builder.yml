@@ -17,6 +17,12 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - '.config'
+      - 'diy-install-deps.sh'
+      - 'diy-part1.sh'
+      - 'diy-part2.sh'
 permissions:
   actions: read
 env:
