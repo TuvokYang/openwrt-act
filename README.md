@@ -1,6 +1,6 @@
 [![OpenWrt Builder](https://github.com/TuvokYang/openwrt-act/actions/workflows/openwrt-builder.yml/badge.svg?)](https://github.com/TuvokYang/openwrt-act/actions/workflows/openwrt-builder.yml)
 
-Building OpenWrt for Cudy TR3000 256MB v1 with GitHub Actions from ![Actions-OpenWrt](https://github.com/P3TERX/Actions-OpenWrt)
+Building OpenWrt for Cudy TR3000 256MB v1 with GitHub Actions from [Actions-OpenWrt](https://github.com/P3TERX/Actions-OpenWrt)
 
 ## Usage
 
