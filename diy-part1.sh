@@ -18,6 +18,7 @@ mkdir -p custom
 pushd custom
     git clone https://github.com/TuvokYang/mentohust.git
     git clone https://github.com/TuvokYang/luci-app-mentohust.git
+    git clone https://github.com/yichya/luci-app-xray.git
 popd
 echo "src-link custom $(pwd)/custom" >> feeds.conf.default
 cat feeds.conf.default
