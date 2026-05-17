@@ -14,6 +14,12 @@
 # sed -i 's|^src-git luci .*|src-git luci https://github.com/TuvokYang/luci.git;openwrt-24.10|' feeds.conf.default
 
 sed -i '/^src-link custom*/d' feeds.conf.default
+
+# Convert feed references from ^commit_hash to ;openwrt-XX.YY format if OPENWRT_VERSION is set
+if [ -n "$OPENWRT_VERSION" ]; then
+  sed -i "/^src-git/s|\^[0-9a-f]\{40\}|;openwrt-${OPENWRT_VERSION}|g" feeds.conf.default
+fi
+
 mkdir -p custom
 pushd custom
     git clone https://github.com/TuvokYang/mentohust.git

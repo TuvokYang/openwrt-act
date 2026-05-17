@@ -15,6 +15,12 @@ name: OpenWrt Builder
 on:
   repository_dispatch:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v25.12.4)'
+        required: true
+        default: 'v25.12.4'
+        type: string
   push:
     branches: [main]
     paths:
@@ -27,7 +33,6 @@ permissions:
   actions: read
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: openwrt-25.12
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
@@ -69,6 +74,20 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@main
+
+    - name: Parse version tag
+      id: version
+      run: |
+        TAG="${{ github.event.inputs.tag || 'v25.12.4' }}"
+        echo "Input tag: $TAG"
+        # Extract major.minor from tag (e.g. v25.12.4 -> 25.12, v24.10.2 -> 24.10)
+        VERSION=$(echo "$TAG" | sed -E 's/^v?([0-9]+\.[0-9]+).*/\1/')
+        echo "Parsed version: $VERSION"
+        echo "repo_branch=openwrt-${VERSION}" >> $GITHUB_OUTPUT
+        echo "openwrt_version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "REPO_BRANCH=openwrt-${VERSION}" >> $GITHUB_ENV
+        echo "OPENWRT_VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
     - name: Free Disk Space
       uses: jlumbroso/free-disk-space@main
@@ -181,9 +200,23 @@ jobs:
       id: tag
       if: success() && env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
-        touch release.txt
-        [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
+        TAG="${{ github.event.inputs.tag || 'v25.12.4' }}"
+        RELEASE_TAG="OpenWrt_${VERSION}${{ env.DEVICE_NAME }}_$(date +"%Y-%m-%d")"
+        echo "release_tag=${RELEASE_TAG}" >> $GITHUB_OUTPUT
+        # Extract changelog content for the specific tag from CHANGELOG.md
+        if [ -f $GITHUB_WORKSPACE/CHANGELOG.md ]; then
+          # Escape regex special chars in tag (e.g. v25.12.4 -> v25\.12\.4)
+          TAG_ESCAPED=$(echo "$TAG" | sed 's/\./\\./g')
+          awk -v tag="$TAG_ESCAPED" '
+            BEGIN { found=0; }
+            $0 ~ "^## " tag "$" { found=1; next; }
+            $0 ~ "^## v" && found { exit; }
+            found { print; }
+          ' $GITHUB_WORKSPACE/CHANGELOG.md > release.txt
+          [ -s release.txt ] || echo "Release $TAG" > release.txt
+        else
+          echo "Release $TAG" > release.txt
+        fi
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release
