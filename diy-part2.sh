@@ -24,6 +24,13 @@ sed -i 's#download-ci-llvm=.* #download-ci-llvm=false #g' feeds/packages/lang/ru
 
 # Fix collectd version-gen.sh: prevent git describe from picking up parent openwrt repo
 # Without this, LCC_VERSION_PATCH gets set to "0-r54" causing compile error
+# Patch version-gen.sh before configure to hardcode the version
 if [ -f feeds/packages/utils/collectd/Makefile ]; then
-    echo 'MAKE_FLAGS += GIT_CEILING_DIRECTORIES="$(PKG_BUILD_DIR)/.."' >> feeds/packages/utils/collectd/Makefile
+    cat >> feeds/packages/utils/collectd/Makefile << 'COLLECTD_FIX'
+
+define Build/Configure
+	sed -i 's|git describe --abbrev=4 HEAD 2>/dev/null|echo 5.12.0|g' $(PKG_BUILD_DIR)/version-gen.sh
+	$(call Build/Configure/Default)
+endef
+COLLECTD_FIX
 fi
