@@ -24,25 +24,9 @@ sed -i 's#download-ci-llvm=.* #download-ci-llvm=false #g' feeds/packages/lang/ru
 
 # Fix collectd version-gen.sh: git describe leaks parent openwrt repo version
 # causing 'r54' undeclared error in lcc_features.h (LCC_VERSION_PATCH=0-r54)
-# Remove git describe logic and hardcode version 5.12.0
-if [ -d feeds/packages/utils/collectd/patches ]; then
-    cat > feeds/packages/utils/collectd/patches/950-fix-version-gen.patch << 'EOF'
---- a/version-gen.sh
-+++ b/version-gen.sh
-@@ -1,13 +1,2 @@
- #!/bin/sh
--
--DEFAULT_VERSION="5.12.0.git"
--
--if [ -d .git ]; then
--	VERSION="`git describe --dirty=+ --abbrev=7 2> /dev/null | sed -e '/^collectd-/!d' -e 's///' -e 'y/-/./'`"
--fi
--
--if test -z "$VERSION"; then
--	VERSION="$DEFAULT_VERSION"
--fi
--
--printf "%s" "$VERSION"
-+printf "5.12.0"
-EOF
+# Override version-gen.sh via OpenWrt files/ mechanism (copied during Build/Prepare)
+if [ -d feeds/packages/utils/collectd ]; then
+    mkdir -p feeds/packages/utils/collectd/files
+    printf '#!/bin/sh\nprintf "5.12.0"\n' > feeds/packages/utils/collectd/files/version-gen.sh
+    chmod +x feeds/packages/utils/collectd/files/version-gen.sh
 fi
