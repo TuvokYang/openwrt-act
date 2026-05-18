@@ -22,15 +22,8 @@
 #set llvm.download-ci-llvm=false for rust
 sed -i 's#download-ci-llvm=.* #download-ci-llvm=false #g' feeds/packages/lang/rust/Makefile
 
-# Fix collectd version-gen.sh: prevent git describe from picking up parent openwrt repo
-# Without this, LCC_VERSION_PATCH gets set to "0-r54" causing compile error
-# Patch version-gen.sh before configure to hardcode the version
-if [ -f feeds/packages/utils/collectd/Makefile ]; then
-    cat >> feeds/packages/utils/collectd/Makefile << 'COLLECTD_FIX'
-
-define Build/Configure
-	sed -i 's|git describe --abbrev=4 HEAD 2>/dev/null|echo 5.12.0|g' $(PKG_BUILD_DIR)/version-gen.sh
-	$(call Build/Configure/Default)
-endef
-COLLECTD_FIX
-fi
+# Disable collectd: version-gen.sh git describe leaks parent openwrt repo version
+# causing 'r54' undeclared error in lcc_features.h (LCC_VERSION_PATCH=0-r54)
+# Local builds work because no parent git repo, but CI has /workdir/openwrt/.git
+sed -i 's/^CONFIG_PACKAGE_collectd=y$/# CONFIG_PACKAGE_collectd is not set/' .config
+sed -i 's/^\(CONFIG_PACKAGE_collectd-mod-.*\)=y$/# \1 is not set/' .config
